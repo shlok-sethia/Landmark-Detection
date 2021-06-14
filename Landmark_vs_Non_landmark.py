@@ -66,4 +66,13 @@ checkpoint_callback = ModelCheckpoint(
     mode = cfg['model_checkpoint_params']['mode']
 )
 
+early_stop_callback = EarlyStopping(
+    monitor = cfg['early_stop_params']['monitor'],
+    min_delta = cfg['early_stop_params']['min_delta'],
+    patience = cfg['early_stop_params']['patience'],
+    verbose = cfg['early_stop_params']['verbose'],
+    mode = cfg['early_stop_params']['mode']
+)
+
+
 
