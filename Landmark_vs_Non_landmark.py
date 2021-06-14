@@ -74,5 +74,13 @@ early_stop_callback = EarlyStopping(
     mode = cfg['early_stop_params']['mode']
 )
 
+neptune_logger = NeptuneLogger(
+    api_key = cfg['api_params']['api_key'],
+    project_name = cfg['api_params']['project_name'],
+    params = cfg['logging_params'],
+    experiment_name = cfg['api_params']['experiment_name'],
+    close_after_fit = cfg['api_params']['close_after_fit']
+) 
+
 
 
