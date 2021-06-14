@@ -137,7 +137,7 @@ class LandvsNoLandDataset(Dataset):
         ])
         self.transforms = transforms.Compose(transforms_list)
 
-def __len__(self):
+    def __len__(self):
         return len(self.df)
 
     def __getitem__(self, index: int):
@@ -172,5 +172,15 @@ class ClassificationModel(pl.LightningModule):
         train_loader = DataLoader(train_dataset, shuffle=True, num_workers=os.cpu_count(), batch_size=self.hparams.batch_size)
         return train_loader
 
+    def val_dataloader(self) -> DataLoader:
+        val_loader = DataLoader(val_dataset, shuffle=False, num_workers=os.cpu_count(), batch_size=self.hparams.batch_size)
+        return val_loader
 
+    def configure_optimizers(self):        
+        optimizer = torch.optim.SGD([
+                {'params': self.model.fc.parameters(), 'lr': self.hparams.classifier_lr},
+            ], lr=self.hparams.learning_rate, momentum=self.hparams.momentum, weight_decay= 5e-3)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer=optimizer, milestones = [12, 24], gamma = 0.1, last_epoch = -1)                                                               
+        return [optimizer], [scheduler]        
+#
 
