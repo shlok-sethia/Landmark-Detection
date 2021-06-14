@@ -82,5 +82,27 @@ neptune_logger = NeptuneLogger(
     close_after_fit = cfg['api_params']['close_after_fit']
 ) 
 
+def data_prepare(landmark_path, non_landmark_path):
+    label_path_dict = {}
+    non_path_dict = {}
+    label_dict = {}
+    non_label_dict = {}
+    for image_path in tqdm_notebook(landmark_path):
+        image_id = image_path.split('/')[-1][:-4]
+        label_dict[image_id] = 0
+        label_path_dict[image_id] = image_path 
 
+    for image_path in tqdm_notebook(non_landmark_path):
+        image_id = image_path.split('/')[-1][:-4]
+        non_label_dict[image_id] = 1
+        non_path_dict[image_id] = image_path 
+
+    label_path_dict.update(non_path_dict)
+    label_dict.update(non_label_dict)
+
+    df = pd.DataFrame(columns=['id', 'path', 'label'])
+    df['id'] = list(label_path_dict.keys())
+    df['path'] = df['id'].apply(lambda x: label_path_dict.get(x))
+    df['label'] = df['id'].apply(lambda x: label_dict.get(x))
+    return df
 
