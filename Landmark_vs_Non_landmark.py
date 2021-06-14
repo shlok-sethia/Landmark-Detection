@@ -184,3 +184,14 @@ class ClassificationModel(pl.LightningModule):
         return [optimizer], [scheduler]        
 #
 
+    def training_step(self, batch, batch_idx):
+        inputs, target = batch
+        output = self.forward(inputs)
+        accuracy_score = accuracy(output, target, num_classes=1)
+        loss = nn.CrossEntropyLoss()(output, target.long())        
+        pbar = {'train_accuracy': accuracy_score}
+        self.logger.experiment.log_metric('loss', loss.item())
+        self.logger.experiment.log_metric('train_accuracy', accuracy_score)      
+        # self.logger.experiment.log_metric('accuracy', accuracy_score[0].item())      
+        return {'loss': loss, 'train_accuracy': accuracy_score, 'progress_bar': pbar}
+# 
