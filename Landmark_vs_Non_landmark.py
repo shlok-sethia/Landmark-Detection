@@ -208,4 +208,10 @@ class ClassificationModel(pl.LightningModule):
         return {'val_loss': val_loss, 'val_accuracy_score': val_accuracy_score, "progress_bar": pbar}
 # 
 
+    def training_epoch_end(self, output):
+        epoch_train_loss = torch.stack([x['loss'] for x in output]).mean()
+        epoch_train_accuracy = torch.stack([x['train_accuracy'] for x in output]).mean()
+        pbar = {'epoch_train_accuracy': epoch_train_accuracy}
+        self.logger.experiment.log_metric('epoch_train_accuracy', epoch_train_accuracy)
+        return {'loss': epoch_train_loss, 'progress_bar': pbar}
 
