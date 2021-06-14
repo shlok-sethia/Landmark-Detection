@@ -56,3 +56,14 @@ def dict_to_args(d):
                     args.__setattr__(k, v)
     dict_to_args_recursive(args, d)
     return args
+
+checkpoint_callback = ModelCheckpoint(
+    filepath= cfg['model_checkpoint_params']['models_save_path'],
+    save_weights_only= cfg['model_checkpoint_params']['save_weights_only'],
+    save_top_k= cfg['model_checkpoint_params']['save_top_k'],
+    verbose= cfg['model_checkpoint_params']['verbose'],
+    monitor= cfg['model_checkpoint_params']['monitor'],
+    mode = cfg['model_checkpoint_params']['mode']
+)
+
+
