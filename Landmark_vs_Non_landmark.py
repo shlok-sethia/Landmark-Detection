@@ -194,4 +194,18 @@ class ClassificationModel(pl.LightningModule):
         self.logger.experiment.log_metric('train_accuracy', accuracy_score)      
         # self.logger.experiment.log_metric('accuracy', accuracy_score[0].item())      
         return {'loss': loss, 'train_accuracy': accuracy_score, 'progress_bar': pbar}
+#
+
+    def validation_step(self, batch, batch_idx):
+        inputs, target = batch
+        output = self.forward(inputs)
+        val_accuracy_score = accuracy(output, target, num_classes=1)
+        val_loss = nn.CrossEntropyLoss()(output, target.long())
+        pbar = {'val_accuracy_score': val_accuracy_score}
+        self.logger.experiment.log_metric('val_loss', val_loss.item())
+        self.logger.experiment.log_metric('val_accuracy_score', val_accuracy_score)
+        # self.logger.experiment.log_metric('accuracy', accuracy_score[0].item())      
+        return {'val_loss': val_loss, 'val_accuracy_score': val_accuracy_score, "progress_bar": pbar}
 # 
+
+
