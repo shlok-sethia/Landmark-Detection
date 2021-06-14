@@ -137,4 +137,20 @@ class LandvsNoLandDataset(Dataset):
         ])
         self.transforms = transforms.Compose(transforms_list)
 
+def __len__(self):
+        return len(self.df)
 
+    def __getitem__(self, index: int):
+        image_id = self.df.loc[index, 'id']
+        image_path = self.df.loc[index, 'path']
+        label = self.df.loc[index, 'label']
+
+        image = Image.open(image_path)
+        image = image.convert('RGB')
+
+        image = self.transforms(image)
+
+        if self.mode == 'test':
+            return image
+        else:
+            return image, label
