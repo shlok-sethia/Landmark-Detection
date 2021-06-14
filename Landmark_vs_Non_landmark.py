@@ -27,3 +27,32 @@ from torchvision.transforms import transforms
 import pytorch_lightning as pl
 from pytorch_lightning.metrics.functional import accuracy
 #from metric.metrics import accuracy
+
+from pytorch_lightning.callbacks import ModelCheckpoint
+from pytorch_lightning.callbacks import EarlyStopping
+from pytorch_lightning.loggers import NeptuneLogger
+from torchvision.transforms import transforms
+from src.utils import load_config
+from pl_bolts.callbacks import PrintTableMetricsCallback
+from pytorch_lightning import Trainer
+import argparse
+
+cfg = load_config('config.yml')
+
+def dict_to_args(d):
+
+    args = argparse.Namespace()
+
+    def dict_to_args_recursive(args, d, prefix=''):
+        for k, v in d.items():
+            if type(v) == dict:
+                dict_to_args_recursive(args, v, prefix=k)
+            elif type(v) in [tuple, list]:
+                continue
+            else:
+                if prefix:
+                    args.__setattr__(prefix + '_' + k, v)
+                else:
+                    args.__setattr__(k, v)
+    dict_to_args_recursive(args, d)
+    return args
