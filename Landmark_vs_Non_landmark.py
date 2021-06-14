@@ -106,3 +106,35 @@ def data_prepare(landmark_path, non_landmark_path):
     df['label'] = df['id'].apply(lambda x: label_dict.get(x))
     return df
 
+class LandvsNoLandDataset(Dataset):
+
+    def __init__(self, df, mode):
+        print(f'creating data loader - {mode}')
+        assert mode in ['train', 'val', 'test']
+        self.df = df
+        self.mode = mode
+
+        transforms_list = []
+
+        if self.mode == 'train':
+            transforms_list = [
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomChoice([
+                    transforms.Resize((256, 256)),
+                    transforms.RandomResizedCrop(224),
+                    transforms.ColorJitter(0.2, 0.2, 0.2, 0.2),
+                    transforms.RandomAffine(degrees=15, translate=(0.2, 0.2),
+                                            scale=(0.8, 1.2), shear=15,
+                                            resample=Image.BILINEAR)
+                ])
+            ]
+
+        transforms_list.extend([
+            transforms.Resize((256, 256)),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                                  std=[0.229, 0.224, 0.225]),
+        ])
+        self.transforms = transforms.Compose(transforms_list)
+
+
