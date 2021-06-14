@@ -154,3 +154,23 @@ def __len__(self):
             return image
         else:
             return image, label
+
+
+class ClassificationModel(pl.LightningModule):
+
+    def __init__(self, hparams, logger):
+        super(ClassificationModel, self).__init__()
+        self.model = timm.create_model('resnext50_32x4d', pretrained= True, num_classes=2)
+        self.hparams = hparams
+        self.criterion = nn.CrossEntropyLoss()
+        self.logger = logger 
+
+    def forward(self, x):
+        return self.model(x)
+
+    def train_dataloader(self) -> DataLoader:
+        train_loader = DataLoader(train_dataset, shuffle=True, num_workers=os.cpu_count(), batch_size=self.hparams.batch_size)
+        return train_loader
+
+
+
