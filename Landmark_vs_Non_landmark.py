@@ -222,4 +222,30 @@ class ClassificationModel(pl.LightningModule):
         self.logger.experiment.log_metric('epoch_val_accuracy', epoch_val_accuracy)
         return {'val_loss': epoch_val_loss, 'progress_bar': pbar}
 
+def main(hparams):
+
+    ## initilize lightning model 
+    model = ClassificationModel(hparams, neptune_logger)
+
+    ## init trainer
+    trainer = Trainer(
+        resume_from_checkpoint= '/home/chandanv/Drive/Competitions/Kaggle/landmark_recognition_2020/models/_ckpt_epoch_0.ckpt',
+        #auto_scale_batch_size = hparams.auto_scale_batch_size,
+        max_epochs = hparams.max_epochs,
+        gpus = hparams.gpus,
+        auto_lr_find = hparams.auto_lr_find,
+        #batch_size = hparams.batch_size, 
+        accumulate_grad_batches = hparams.accumulate_grad_batches,
+        distributed_backend = hparams.distributed_backend,
+        precision = 16 if hparams.use_16bit else 32,
+        checkpoint_callback= checkpoint_callback,
+        logger = neptune_logger,
+        #gradient_clip_val= hparams.gradient_clip_val,
+        early_stop_callback = early_stop_callback,
+        callbacks= [PrintTableMetricsCallback()],
+        #use_amp = hparams.use_amp, 
+        )
+
+    ## start training
+    trainer.fit(model)
 
