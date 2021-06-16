@@ -249,3 +249,22 @@ def main(hparams):
     ## start training
     trainer.fit(model)
 
+if __name__ == '__main__':
+    config = load_config('config.yml')
+    landmark_dir = '/home/chandanv/Drive/Competitions/Kaggle/landmark_recognition_2020/data/gldv2_dataset/train_256/*'
+    non_landmark_dir = '/home/chandanv/Drive/Competitions/Kaggle/landmark_recognition_2020/data/gldv2_dataset/open_images/*/images/*'
+    landmark_path = glob.glob(landmark_dir)
+    non_landmark_path = glob.glob(non_landmark_dir)
+    len(non_landmark_path)
+    df = data_prepare(landmark_path, non_landmark_path)
+    train_df, val_df = train_test_split(df, test_size = 0.2, random_state = 2020)  
+    train_df.reset_index(inplace = True, drop = True)
+    val_df.reset_index(inplace = True, drop = True)
+    train_dataset = LandvsNoLandDataset(train_df, mode='train')
+    val_dataset = LandvsNoLandDataset(val_df, mode = 'val')                                 
+
+    hparams = dict_to_args(config['logging_params'])
+    neptune_logger.experiment.log_artifact(config['logging_params']['artifacts_dir'])    
+    main(hparams)
+    neptune_logger.experiment.stop()
+
