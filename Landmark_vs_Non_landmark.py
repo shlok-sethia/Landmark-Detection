@@ -229,7 +229,7 @@ def main(hparams):
 
     ## init trainer
     trainer = Trainer(
-        resume_from_checkpoint= '/home/chandanv/Drive/Competitions/Kaggle/landmark_recognition_2020/models/_ckpt_epoch_0.ckpt',
+        resume_from_checkpoint= '/models/_ckpt_epoch_0.ckpt',
         #auto_scale_batch_size = hparams.auto_scale_batch_size,
         max_epochs = hparams.max_epochs,
         gpus = hparams.gpus,
@@ -251,8 +251,8 @@ def main(hparams):
 
 if __name__ == '__main__':
     config = load_config('config.yml')
-    landmark_dir = '/home/chandanv/Drive/Competitions/Kaggle/landmark_recognition_2020/data/gldv2_dataset/train_256/*'
-    non_landmark_dir = '/home/chandanv/Drive/Competitions/Kaggle/landmark_recognition_2020/data/gldv2_dataset/open_images/*/images/*'
+    landmark_dir = '/data/gldv2_dataset/train_256/*'
+    non_landmark_dir = '/data/gldv2_dataset/open_images/*/images/*'
     landmark_path = glob.glob(landmark_dir)
     non_landmark_path = glob.glob(non_landmark_dir)
     len(non_landmark_path)
